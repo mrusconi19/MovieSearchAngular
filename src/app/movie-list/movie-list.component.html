@@ -1,0 +1,77 @@
+<!-- ---------------------For Debugging------------------------------------------------------------ -->
+
+<!-- <p>movie-list works!</p> -->
+
+<!-- <input type="text" class="search" [(ngModel)]="searchQuery" name="search" placeholder="Search for Movies"> -->
+
+<!-- <button (click)="searchMovies(searchQuery)" type="button">Find Movie</button> -->
+
+<!-- <input type="text" class="search" #search name="search" placeholder="Search for Movies"> -->
+
+<!-- <button (click)="searchMovies(search.value)" type="button">Find Movie</button> -->
+
+<!-- <p *ngIf="searching">Fetching Data...</p> -->
+
+<!-- <div *ngFor="let movie of movies" class="movie-container">
+    <img src="https://image.tmdb.org/t/p/w185{{ movie.poster_path }}">
+    <p>Title: {{ movie.original_title }}</p>
+    <p>Language: {{ movie.original_language }}</p>
+    <p>Vote: {{ movie.vote_average }}</p>
+    <p>Date: {{ movie.release_date }}</p>
+</div> -->
+
+<!-- ------------------------------------------------------------------------------------------------------ -->
+
+<mat-card>
+
+  <mat-form-field>
+    <input matInput required type="text" class="search" #search name="search" placeholder="Search for movies"
+      [(ngModel)]="searchText" (keyup)="handleKeyUp($event, search.value, page)" />
+  </mat-form-field>
+  <br>
+  <button (click)="searchMovies(search.value, page)" md-raised-button class="searchButton" type="submit"
+    [disabled]="searchText === '' || searchText ===' '">Find Movies</button>
+
+</mat-card>
+
+<div *ngIf="searching">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<mat-card>
+  <h4 *ngIf="moviesFound" mat-subheader>Results</h4>
+  <h4 *ngIf="nothingFound" mat-subheader>No movies found with that search.</h4>
+
+  <ngx-masonry>
+    <div ngxMasonryItem class="movie-container" *ngFor="let movie of movies">
+      <mat-card-header>
+        <mat-card-title>Title: {{ movie.original_title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-header>
+        <img md-card-image src="https://image.tmdb.org/t/p/w185{{ movie.poster_path }}">
+      </mat-card-header>
+      <mat-card-header>
+        <p>Language: {{ movie.original_language }}</p>
+      </mat-card-header>
+      <mat-card-header>
+        <p>Votes: {{ movie.vote_average }}</p>
+      </mat-card-header>
+      <mat-card-header>
+        <p>Released: {{ movie.release_date | date}}</p>
+      </mat-card-header>
+    </div>
+  </ngx-masonry>
+
+</mat-card>
+
+<mat-card style="margin-top: 10px; margin-bottom: 10px;">
+  <div class="pagination" style="text-align: center;">
+    <a class="btn" href="#" (click)="previousPage(search.value)">
+      <i class="fas fa-arrow-alt-circle-left fa-2x"></i></a>
+    <input type="text" [value]='page + " out of " + totalPages' readonly
+      style="text-align: center; margin-left: 25px; margin-right: 25px; font-size: 30px;">
+    <a class="btn" href="#" (click)="nextPage(search.value)">
+      <i class="fas fa-arrow-alt-circle-right fa-2x"></i></a>
+  </div>
+</mat-card>
+<br>
