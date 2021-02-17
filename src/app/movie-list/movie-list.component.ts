@@ -1,38 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from '../shared/movie.service';
+import { isoLangs } from '../shared/isoLanguage';
+import { iso2Langs } from '../shared/iso2lang';
 
 @Component({
   selector: 'app-movie-list',
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.css']
 })
+
 export class MovieListComponent implements OnInit {
+
+  constructor(private movieService: MovieService) { }
   movies: any[] = [];
   moviesFound = false;
   searching = false;
   searchText = '';
   nothingFound = false;
-  page = 0;
-
+  page = 1;
   totalPages = 0;
 
   // tslint:disable-next-line:typedef
   handleSuccess(data: any) {
-    if (this.page === 0) { this.page += 1; }
     this.nothingFound = data.results.length === 0;
     this.moviesFound = data.results.length > 0;
     this.movies = data.results.sort((a: any, b: any) => b.vote_average - a.vote_average);
     this.totalPages = data.total_pages;
-    console.log(data.results);
-    console.log(this.totalPages);
+    // console.log(data.results);
   }
 
   // tslint:disable-next-line:typedef
   handleError(error: any) {
     console.log(error);
   }
-
-  constructor(private movieService: MovieService) { }
 
   // tslint:disable-next-line:typedef
   handleKeyUp(e: { keyCode: number; }, query: string, page: number) {
@@ -69,6 +69,15 @@ export class MovieListComponent implements OnInit {
       error => this.handleError(error),
       () => this.searching = false
     );
+  }
+
+  // tslint:disable-next-line:typedef
+  convertCountryCode(code: string) {
+    if (iso2Langs.hasOwnProperty(code)) {
+      return iso2Langs[code];
+    } else {
+        return code;
+    }
   }
 
   // For debugging:

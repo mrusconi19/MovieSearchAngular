@@ -23,7 +23,6 @@
 <!-- ------------------------------------------------------------------------------------------------------ -->
 
 <mat-card>
-
   <mat-form-field>
     <input matInput required type="text" class="search" #search name="search" placeholder="Search for movies"
       [(ngModel)]="searchText" (keyup)="handleKeyUp($event, search.value, page)" />
@@ -31,45 +30,46 @@
   <br>
   <button (click)="searchMovies(search.value, page)" md-raised-button class="searchButton" type="submit"
     [disabled]="searchText === '' || searchText ===' '">Find Movies</button>
-
 </mat-card>
 
 <div *ngIf="searching">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 
-<mat-card>
-  <h4 *ngIf="moviesFound" mat-subheader>Results</h4>
-  <h4 *ngIf="nothingFound" mat-subheader>No movies found with that search.</h4>
+<mat-card *ngIf="nothingFound">
+  <h2 class="results" mat-subheader>Sorry, no movies found with that search <i class="far fa-frown fa-2x"></i></h2>
+</mat-card>
 
-  <ngx-masonry>
+<mat-card *ngIf="moviesFound">
+  <h2 class="results" mat-subheader>Results:</h2>
+
+  <ngx-masonry [options]="{ horizontalOrder: true }">
     <div ngxMasonryItem class="movie-container" *ngFor="let movie of movies">
       <mat-card-header>
-        <mat-card-title>Title: {{ movie.original_title }}</mat-card-title>
+        <mat-card-title class="title">Title: {{ movie.original_title }}</mat-card-title>
       </mat-card-header>
       <mat-card-header>
         <img md-card-image src="https://image.tmdb.org/t/p/w185{{ movie.poster_path }}">
       </mat-card-header>
       <mat-card-header>
-        <p>Language: {{ movie.original_language }}</p>
+        <!-- <p>Language: {{ movie.original_language }}</p> -->
+        <p class="desc mb mt">Language: {{ convertCountryCode(movie.original_language) }}</p>
       </mat-card-header>
       <mat-card-header>
-        <p>Votes: {{ movie.vote_average }}</p>
+        <p class="desc mb">Votes: {{ movie.vote_average }}</p>
       </mat-card-header>
       <mat-card-header>
-        <p>Released: {{ movie.release_date | date}}</p>
+        <p class="desc">Released: {{ movie.release_date | date}}</p>
       </mat-card-header>
     </div>
   </ngx-masonry>
-
 </mat-card>
 
-<mat-card style="margin-top: 10px; margin-bottom: 10px;">
+<mat-card *ngIf="moviesFound" style="margin-top: 10px; margin-bottom: 10px;">
   <div class="pagination" style="text-align: center;">
     <a class="btn" href="#" (click)="previousPage(search.value)">
       <i class="fas fa-arrow-alt-circle-left fa-2x"></i></a>
-    <input type="text" [value]='page + " out of " + totalPages' readonly
-      style="text-align: center; margin-left: 25px; margin-right: 25px; font-size: 30px;">
+    <input class="input" type="text" [value]='"Page: " + page + " of " + totalPages' readonly>
     <a class="btn" href="#" (click)="nextPage(search.value)">
       <i class="fas fa-arrow-alt-circle-right fa-2x"></i></a>
   </div>
